@@ -1,9 +1,19 @@
 import org.apache.pdfbox.util.PDFTextStripper
 import org.apache.pdfbox.pdmodel.PDDocument
+import java.io.File
+
 
 object Mandelbrot {
+  val defaultDirectory = "./pdf"
+
   def main(args: Array[String]) {
-    readMultiple(args)
+    if (0 == args.length) {
+      print(readMultiple(args))
+    } else {
+      val dir = new File(defaultDirectory)
+      val files = dir.listFiles
+      print(readMultiple(files.map(_.getPath)))
+    }
   }
 
   def readMultiple(args: Array[String]) = {

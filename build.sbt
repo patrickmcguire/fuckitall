@@ -13,3 +13,4 @@ libraryDependencies += "org.bouncycastle" % "bcmail-jdk15" % "1.44"
 
 libraryDependencies += "com.ibm.icu" % "icu4j" % "3.8"
 
+libraryDependencies += "nz.ac.waikato.cms.weka" % "weka-stable" % "3.6.10"
