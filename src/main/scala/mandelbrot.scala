@@ -29,4 +29,14 @@ object Mandelbrot {
       }
     } 
   }
+
+  def defaultFileNames = {
+    val dir = new File(defaultDirectory)
+    dir.listFiles.map(_.getPath)
+  }
+
+  def fetchObjects = {
+    val fileNames = defaultFileNames
+    fileNames.map(PDDocument.load(_))
+  }
 }
