@@ -6,6 +6,8 @@ import java.io.File
 object Mandelbrot {
   val defaultDirectory = "./pdf"
 
+  val resumeFileName = "./pdf/Patrick McGuire Resume.pdf"
+
   def main(args: Array[String]) {
     if (0 == args.length) {
       print(readMultiple(args))
@@ -39,4 +41,9 @@ object Mandelbrot {
     val fileNames = defaultFileNames
     fileNames.map(PDDocument.load(_))
   }
+
+  def openResume = {
+    PDDocument.load(resumeFileName)
+  }
+
 }
