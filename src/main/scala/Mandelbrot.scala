@@ -3,7 +3,7 @@ import scala.collection.JavaConversions._
 import org.apache.pdfbox.cos._
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.util.PDFTextStripper
-
+import pdftree._;
 
 object Mandelbrot {
   val defaultDirectory = "./pdf"
@@ -55,22 +55,31 @@ object Mandelbrot {
     useableObjects
   }
 
-  def recur(objects: List[COSBase]) = {
+  def recur(objects: List[COSBase]):List[PDFNode] = {
     objects.map { (cos: COSBase) => objectMap(cos) }
   }
 
-  def objectMap(cos: COSBase) = {
+  def objectMap(cos: COSBase):PDFNode = {
     cos match {
-      case (string: COSString) => string
+      case (string: COSString) => new PDFString(string)
       case (array: COSArray) => 
-        val subObjects: List[COSBase] = array.toList.toList
-        recur(subObjects)
-      case (int: COSInteger) => int
-      case (stream: COSStream) => stream
-      case (dict: COSDictionary) => 
-        val keys = dict.keyList.toList
-        val subObjects = keys.map(dict.getItem(_))
-        objectMap(subObjects)
+        val subSeq =  for (i <- 0 until array.size) yield array.get(i)
+        val subList = subSeq.toList
+        new PDFChildren(recur(subList))
+      case (name: COSName) => new PDFName(name)
+      case (int: COSInteger) => new PDFInt(int)
+      case (stream: COSStream) => new PDFStream(stream)
+      case (ob: COSObject) => objectMap(ob.getObject)
+      case (dict: COSDictionary) => extractDictionary(dict)
     }
   }
-}
+  def extractDictionary(dict: COSDictionary) = {
+    println(dict)
+    Thread.sleep(1000)
+    val keyList = dict.keyList.toList
+    val stringKeys = keyList.map(_.getName)
+    val tuples = stringKeys.map((k: String) => (k, objectMap(dict.getItem(k))))
+    val map = tuples.toMap
+    new PDFDict(map)
+  }
+} 
